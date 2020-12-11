@@ -1,0 +1,22 @@
+#!/bin/bash -eu
+SEARCH_URL="https://www.audible.com/search?sort=popularity-rank&pageSize=50&ipRedirectOverride=true&overrideBaseCountry=true"
+WGET_ARGS=(-q -O - --max-redirect 0 --header "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:82.0) Gecko/20100101 Firefox/82.0")
+for lang in 18685609011 18685583011 18685582011 18685590011 18685603011 18685606011 18685591011 18685578011 18685596011 18685571011 18685622011 18685579011; do
+  echo "Scraping search results for language $lang..." >&2
+  for i in `seq 1 24`; do
+    echo -n "Downloading page $i of 24 for lang $lang... "
+    out=`wget "$SEARCH_URL&page=$i&feature_six_browse-bin=$lang" "${WGET_ARGS[@]}"`
+    set +e
+    mp3s=`echo "$out" | rg -o --no-config "https://samples.audible.com/.+?\.mp3"`
+    ok=$?
+    set -e
+    if [ $ok -ne 0 ]; then
+      echo "Done, found no URLs, skipping remaining pages"
+      break
+    else
+      echo "Done, found `echo "$mp3s" | wc -l` URLs"
+      echo "$out" >> "$1"
+    fi
+    sleep 10
+  done
+done

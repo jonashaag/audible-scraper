@@ -1,0 +1,12 @@
+#!/bin/bash -eu
+WGET_ARGS=(-q --header "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:82.0) Gecko/20100101 Firefox/82.0")
+outfolder="$1"
+target="$outfolder"/`basename "$2"`
+if [ -e "$target" ]; then
+  echo "$target already exists" >&2
+  exit 1
+else
+  echo -n "Downloading $2 to $target... "
+  wget "$2" -O "$target" "${WGET_ARGS[@]}"
+  echo Done
+fi
