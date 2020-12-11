@@ -15,8 +15,9 @@ for lang in 18685609011 18685583011 18685582011 18685590011 18685603011 18685606
       break
     else
       echo "Done, found `echo "$mp3s" | wc -l` URLs"
-      echo "$out" >> "$1"
+      echo "$mp3s" >> "$1"
     fi
     sleep 10
   done
 done
+echo Done
